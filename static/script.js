@@ -1,18 +1,34 @@
 
+// wrapper of item elements
 const wrapper = document.querySelector('main')
 
-const loadMore = (num = 1) => {
-  for (let i = 0; i < num; i++) {
-    const item = document.createElement('article')
-    item.innerText = wrapper.querySelectorAll('article').length + 1
-    wrapper.appendChild(item)
+// current position
+let current = 1
+
+// load 3 more items
+const loadMore = () => {
+  if (current <= config.total - 2) {
+    fetch(`http://0.0.0.0:${config.port}/api/next?current=${current}`)
+      .then(response => response.json())
+      .then(items => {
+        items.forEach(num => {
+          const item = document.createElement('article')
+          item.innerText = num
+          wrapper.appendChild(item)
+        });
+        current += items.length
+      })
   }
 }
 
+// add scroll event listener to wrapper
 wrapper.addEventListener('scroll', () => {
   if (wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight) {
     loadMore()
   }
 })
 
-loadMore(3)
+// start logic when DOM content is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  loadMore()
+})

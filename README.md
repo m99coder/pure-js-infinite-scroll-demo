@@ -27,6 +27,6 @@ HTTP Server listening on http://0.0.0.0:3000
 
 - [x] ~Add an HTTP server for static assets~
 - [x] ~Add a basic flex box-based layout~
-- [ ] Add an API endpoint
-- [ ] Use Fetch API to retrieve items (posts)
+- [x] ~Add an API endpoint~
+- [x] ~Use Fetch API to retrieve items (posts)~
 - [ ] Use History API or Local Storage to cache items
