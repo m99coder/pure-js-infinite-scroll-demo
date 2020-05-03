@@ -1,0 +1,41 @@
+* {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav,
+main,
+aside {
+  height: 100vh;
+  overflow-y: scroll;
+  flex: 1;
+}
+
+nav {
+  flex: 2;
+}
+
+main {
+  flex: 4;
+
+}
+
+#logo {
+  margin: 1em;
+  padding: 1em;
+  width: 4em;
+  height: 4em;
+  background: #F4F0E7;
+}
+
+article {
+  margin: 1em;
+  padding: 1em;
+  background: #F4F0E7;
+  height: 20em;
+}
