@@ -3,66 +3,81 @@
   // wrapper of item elements
   const wrapper = document.querySelector('main')
 
-  // current number of items
-  let current = 0
-
-  // get scroll position in a cross-browser manner
-  const getScrollPosition = () => {
-    let screenOffsetX = 0
-    let screenOffsetY = 0
-
-    if (typeof(window.pageYOffset) === 'number') {
-      // Netscape compliant
-      screenOffsetY = window.pageYOffset
-      screenOffsetX = window.pageXOffset
-    } else if (document.body && (document.body.scrollLeft || document.body.scrollTop)) {
-      // DOM compliant
-      screenOffsetY = document.body.scrollTop
-      screenOffsetX = document.body.scrollLeft
-    } else if (document.documentElement && (document.documentElement.scrollLeft || document.documentElement.scrollTop)) {
-      // IE6 standards compliant mode
-      screenOffsetY = document.documentElement.scrollTop
-      screenOffsetX = document.documentElement.scrollLeft
-    }
-
-    return [screenOffsetX, screenOffsetY]
+  // state representing current number of items and scroll top position
+  let state = {
+    items: 0,
+    scrollTop: 0
   }
 
-  // get effective document height from one of the potential values
-  const getDocumentHeight = () => {
-    return Math.max(
-      document.body.scrollHeight, document.documentElement.scrollHeight,
-      document.body.offsetHeight, document.documentElement.offsetHeight,
-      document.body.clientHeight, document.documentElement.clientHeight
-    )
-  }
-
-  // load `batch` more items
-  const loadMore = () => {
-    if (current <= config.total - config.batch) {
-      fetch(`http://0.0.0.0:${config.port}/api/next?last=${current}`)
-        .then(response => response.json())
-        .then(items => {
-          items.forEach(num => {
-            const item = document.createElement('article')
-            item.innerText = num
-            wrapper.appendChild(item)
-          });
-          current += config.batch
-        })
-    }
-  }
-
-  // add scroll event listener to wrapper
-  document.addEventListener('scroll', () => {
-    if (getDocumentHeight() == getScrollPosition()[1] + window.innerHeight) {
-      loadMore()
+  // load from session storage if existing or persist defaults
+  Object.keys(state).forEach(key => {
+    if (sessionStorage.getItem(`state.${key}`)) {
+      state[key] = sessionStorage.getItem(`state.${key}`) - 0
+    } else {
+      sessionStorage.setItem(`state.${key}`, state[key])
     }
   })
 
+  // persist current state in session storage
+  const persistState = () => {
+    Object.keys(state).forEach(key => {
+      sessionStorage.setItem(`state.${key}`, state[key])
+    })
+  }
+
+  // return a promise and load `batch` more items if applicable
+  const loadMore = async (last) => {
+    return new Promise(
+      resolve => {
+        if (last <= config.total - config.batch) {
+          fetch(`http://0.0.0.0:${config.port}/api/next?last=${last}`)
+            .then(response => response.json())
+            .then(items => {
+              items.forEach(num => {
+                const item = document.createElement('article')
+                item.innerText = num
+                wrapper.appendChild(item)
+              });
+              resolve()
+            })
+        } else {
+          resolve()
+        }
+      }
+    )
+  }
+
+  // add scroll event listener to wrapper
+  document.addEventListener('scroll', async () => {
+
+    // update current scroll top position in `state`
+    const position = Utils.getScrollPosition()
+    state.scrollTop = position[1]
+    persistState()
+
+    // check if bottom of page is reached and trigger loading more items
+    if (Utils.getDocumentHeight() === position[1] + window.innerHeight) {
+      await loadMore(state.items + config.batch).then(() => {
+        persistState()
+        state.items += config.batch
+      })
+    }
+
+  })
+
   // start logic when DOM content is loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    loadMore()
+  document.addEventListener('DOMContentLoaded', async () => {
+
+    // calculate number of calls to trigger initially
+    const times = (state.items + config.batch) / config.batch
+
+    for (let i = 0; i < times; i++) {
+      await loadMore(i * config.batch)
+    }
+
+    // scroll to persisted position
+    window.scrollTo(0, state.scrollTop)
+
   })
 
 })()

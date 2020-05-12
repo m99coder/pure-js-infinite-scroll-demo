@@ -28,7 +28,12 @@ app.use('/', express.static(path.join(__dirname, 'static')))
 app.get('/api/next', (req, res) => {
   const last = req.query.last - 0 || 0
   const items = [...Array(3).keys()].map(num => last + num + 1)
-  res.json(items)
+  // simulate different response times up to 500ms
+  const defer = Math.random() * 500
+  setTimeout(() => {
+    res.setHeader('X-Sleep', defer)
+    res.json(items)
+  }, defer)
 })
 
 // create HTTP server listening on given or default port
