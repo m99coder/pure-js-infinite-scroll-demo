@@ -27,9 +27,9 @@ app.use('/', express.static(path.join(__dirname, 'static')))
 // mocked API endpoint
 app.get('/api/next', (req, res) => {
   const last = req.query.last - 0 || 0
-  const items = [...Array(3).keys()].map(num => last + num + 1)
-  // simulate different response times up to 500ms
-  const defer = Math.random() * 500
+  const items = [...Array(batch).keys()].map(num => last + num + 1)
+  // simulate different response times up to 200ms
+  const defer = Math.random() * 200
   setTimeout(() => {
     res.setHeader('X-Sleep', defer)
     res.json(items)
