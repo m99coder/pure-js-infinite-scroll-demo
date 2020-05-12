@@ -25,8 +25,8 @@ app.use('/', express.static(path.join(__dirname, 'static')))
 
 // mocked API endpoint
 app.get('/api/next', (req, res) => {
-  const current = req.query.current - 0 || 1
-  const items = [...Array(3).keys()].map(num => current + num)
+  const last = req.query.last - 0 || 0
+  const items = [...Array(3).keys()].map(num => last + num + 1)
   res.json(items)
 })
 
