@@ -7,6 +7,7 @@ const express = require('express')
 
 // configuration of port number and number of total items to provide
 const port = process.env.PORT - 0 || 3000
+const batch = process.env.BATCH - 0 || 3
 const total = process.env.TOTAL - 0 || 30
 
 // create express application
@@ -15,7 +16,7 @@ const app = express()
 // interfere request for `config.js` and return it, otherwise proceed
 app.use('/', (req, res, next) => {
   if (req.path === '/config.js') {
-    return res.send(`const config = {port: ${port}, total: ${total}}`).end()
+    return res.send(`const config = {port: ${port}, batch: ${batch}, total: ${total}}`).end()
   }
   next()
 })

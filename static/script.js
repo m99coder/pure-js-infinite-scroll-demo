@@ -37,9 +37,9 @@
     )
   }
 
-  // load 3 more items
+  // load `batch` more items
   const loadMore = () => {
-    if (current <= config.total - 3) {
+    if (current <= config.total - config.batch) {
       fetch(`http://0.0.0.0:${config.port}/api/next?last=${current}`)
         .then(response => response.json())
         .then(items => {
@@ -48,7 +48,7 @@
             item.innerText = num
             wrapper.appendChild(item)
           });
-          current += items.length
+          current += config.batch
         })
     }
   }

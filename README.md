@@ -11,10 +11,18 @@ added 50 packages from 37 contributors and audited 126 packages in 0.872s
 found 0 vulnerabilities
 ```
 
+### Configuration
+
+You can customize the following settings using environment variables:
+
+* Batch size: `BATCH=5` (defaults to `3`)
+* Total size: `TOTAL=10` (defaults to `30`)
+* Port: `PORT=9181` (defaults to `3000`)
+
 ### Run
 
 ```bash
-$ # define custom port with `PORT=9181 npm start` or use default port with:
+$ # use default settings with:
 $ npm start
 
 > pure-js-infinite-scroll-demo@0.1.0 start /my/folder/pure-js-infinite-scroll-demo
@@ -22,11 +30,3 @@ $ npm start
 
 HTTP Server listening on http://0.0.0.0:3000
 ```
-
-### Tasks
-
-- [x] ~Add an HTTP server for static assets~
-- [x] ~Add a basic flex box-based layout~
-- [x] ~Add an API endpoint~
-- [x] ~Use Fetch API to retrieve items (posts)~
-- [ ] Use History API or Local Storage to cache items
